@@ -1,0 +1,29 @@
+MASTER SUPPLY ORDER — MATCHED ALTERNATE DRAFT
+Contract ID: C-2026-312
+Commercial reference: Q-2026-0842
+Supplier: Example Supplier Co.
+Buyer: Example Buyer Co.
+Program: NX-48 Charging Module Program
+Effective date: August 22, 2026
+
+1. GOODS AND QUANTITY
+Supplier will provide 1,200 NX-48 charging control modules.
+
+2. PRICE
+Unit price is USD 46.80. Total contract value is USD 56,160.00.
+
+3. DELIVERY
+Delivery will occur on or before October 15, 2026.
+Freight: Expedited ground freight included
+
+4. PAYMENT
+Invoices are payable Net 45 from invoice date.
+
+5. WARRANTY
+Warranty: 24 months from delivery
+
+6. FEES
+Cancellation/restocking fee: None before production release
+
+7. COMMERCIAL REFERENCE
+The commercial terms of Quote Q-2026-0842 are incorporated into this order.

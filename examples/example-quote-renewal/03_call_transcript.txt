@@ -1,0 +1,15 @@
+CALL TRANSCRIPT — NX-48 COMMERCIAL REVIEW
+Date: August 20, 2026
+Participants: Buyer Reviewer (Example Buyer Co.), Supplier Reviewer (Example Supplier Co.), Supplier Operations (Example Supplier Co. Operations)
+Reference: Quote Q-2026-0842
+
+00:03 Buyer Reviewer: I want to confirm the business terms before legal finalizes the paperwork.
+00:12 Supplier Reviewer: Confirmed: twelve hundred units at forty-six dollars and eighty cents each.
+00:24 Supplier Operations: We can deliver the full quantity no later than October fifteenth.
+00:38 Buyer Reviewer: And expedited ground freight remains included at no additional charge?
+00:42 Supplier Reviewer: Yes, included.
+00:51 Buyer Reviewer: Net forty-five and a twenty-four month warranty are also unchanged?
+00:56 Supplier Reviewer: Correct.
+01:05 Buyer Reviewer: Finally, no restocking or cancellation fee before the production release.
+01:10 Supplier Reviewer: Agreed.
+01:22 Supplier Operations: We'll use Q-2026-0842 as the commercial source for the final contract.

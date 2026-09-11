@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A complete local test and demo guide for Verdean's quote, invoice, and contract reconciliation workflow.">
+  <title>Verdean Test Kit — Start here</title>
+  <style>
+    :root { --ink:#171714; --muted:#696761; --paper:#f7f4ee; --panel:#fffdf9; --line:#e3ddd2; --olive:#6f7654; --sage:#d8e5d2; --sage-deep:#35614c; --clay:#e56e45; --clay-deep:#b94829; --gold:#f5c765; --blue:#dcecf3; --shadow:0 24px 70px rgba(23,23,20,.08); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:15px/1.6 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif; }
+    .shell { width:min(1120px,calc(100% - 32px)); margin:0 auto; padding:28px 0 80px; }
+    header { display:grid; grid-template-columns:1.15fr .85fr; gap:34px; align-items:end; padding:34px; border-radius:24px; color:#fffdf9; background:var(--ink); box-shadow:var(--shadow); }
+    .kicker { margin:0 0 8px; color:var(--clay-deep); font-size:11px; font-weight:850; letter-spacing:.14em; text-transform:uppercase; }
+    header .kicker { color:var(--gold); }
+    h1 { max-width:720px; margin:0; font-size:clamp(38px,5vw,62px); line-height:1; letter-spacing:-.052em; }
+    h1 em { color:#e3eedf; font-family:Georgia,serif; font-weight:400; }
+    .lede { margin:0; color:#d3d0c9; font-size:16px; }
+    .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:18px; }
+    .button,button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:8px 14px; border:1px solid transparent; border-radius:9px; color:var(--ink); background:var(--gold); font:inherit; font-weight:780; text-decoration:none; cursor:pointer; }
+    .button.secondary { border-color:#50504a; color:#fff; background:#292925; }
+    .button.tertiary { border-color:#c7d8c9; color:var(--sage-deep); background:#eff7f0; }
+    nav { position:sticky; z-index:5; top:0; display:flex; gap:5px; overflow:auto; margin:16px 0; padding:8px; border:1px solid var(--line); border-radius:12px; background:rgba(247,244,238,.96); backdrop-filter:blur(12px); }
+    nav a { flex:0 0 auto; padding:7px 10px; border-radius:7px; color:var(--muted); font-size:12px; font-weight:760; text-decoration:none; }
+    nav a:hover { color:var(--ink); background:var(--sage); }
+    section { scroll-margin-top:72px; margin-top:16px; padding:25px; border:1px solid var(--line); border-radius:17px; background:var(--panel); }
+    section h2 { margin:0 0 5px; font-size:26px; letter-spacing:-.03em; }
+    section h3 { margin:22px 0 7px; font-size:17px; }
+    .note { margin:0; color:var(--muted); }
+    .quick { border-color:#afc3b2; background:linear-gradient(145deg,#fffdf9,#eef5ed); }
+    .checklist { display:grid; gap:9px; margin:17px 0 0; padding:0; list-style:none; }
+    .checklist label { display:flex; gap:10px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.74); cursor:pointer; }
+    input[type=checkbox] { flex:0 0 auto; width:18px; height:18px; margin-top:3px; accent-color:var(--sage-deep); }
+    ol.steps { counter-reset:step; margin:16px 0 0; padding:0; list-style:none; }
+    ol.steps > li { position:relative; margin-bottom:10px; padding:13px 14px 13px 52px; border:1px solid var(--line); border-radius:10px; background:#fff; }
+    ol.steps > li::before { counter-increment:step; content:counter(step); position:absolute; left:13px; top:12px; display:grid; place-items:center; width:27px; height:27px; border-radius:50%; color:#fff; background:var(--ink); font-size:12px; font-weight:850; }
+    .path { display:flex; align-items:center; gap:8px; margin:10px 0; padding:10px 12px; border:1px solid var(--line); border-radius:9px; background:#f2efe8; font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; overflow-wrap:anywhere; }
+    .copy { min-height:30px; margin-left:auto; padding:3px 8px; border-color:var(--line); background:#fff; font-size:11px; }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin:16px 0; }
+    .metric { padding:13px; border:1px solid #c5d6c7; border-radius:10px; background:#edf5ec; }
+    .metric strong { display:block; font-size:24px; line-height:1.1; }
+    .metric span { color:#526357; font-size:11px; }
+    table { width:100%; margin:13px 0; border-collapse:collapse; }
+    th,td { padding:9px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:var(--muted); font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
+    code { padding:2px 5px; border-radius:4px; background:#efebe3; font:12px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .callout { margin:13px 0; padding:12px 14px; border:1px solid #c8d9cb; border-radius:9px; color:#34503f; background:#edf6ef; }
+    .callout.warning { border-color:#e7b7a4; color:#723e2d; background:#fff0e8; }
+    .callout.gold { border-color:#e8cc85; color:#62501f; background:#fff7dc; }
+    details { margin-top:10px; border:1px solid var(--line); border-radius:9px; background:#fff; }
+    summary { padding:11px 13px; cursor:pointer; font-weight:760; }
+    details > div { padding:0 13px 13px; }
+    footer { padding:22px 4px 0; color:var(--muted); text-align:center; font-size:12px; }
+    @media(max-width:800px){.shell{width:min(100% - 20px,1120px);padding-top:10px}header{grid-template-columns:1fr;padding:23px}.metrics{grid-template-columns:1fr 1fr}section{padding:19px}.path{align-items:flex-start;flex-direction:column}.copy{margin-left:0}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="kicker">Prepared local test kit · Current Verdean build</p>
+        <h1>Test the real workflow, <em>without staging the result.</em></h1>
+      </div>
+      <div>
+        <p class="lede">Five canonical source files, a safe reset, exact expected counts, D1 reload proof, annotated clause previews, reviewer email handoff, and optional recovery cases.</p>
+        <div class="actions">
+          <a class="button" href="http://localhost:3000" target="_blank" rel="noreferrer">Open Verdean</a>
+          <a class="button secondary" href="01%20-%20CONNECT%20THIS%20FOLDER/">Open test folder</a>
+          <a class="button tertiary" href="HOW%20VERDEAN%20WORKS.html" target="_blank">How Verdean works</a>
+        </div>
+      </div>
+    </header>
+
+    <nav aria-label="Guide sections"><a href="#quick">Quick demo</a><a href="#start">Start</a><a href="#baseline">Baseline</a><a href="#review">Review</a><a href="#handoff">Preview + email</a><a href="#persistence">D1</a><a href="#folder">Folder output</a><a href="#ocr">OCR scan</a><a href="#optional">Optional tests</a><a href="#reset">Reset</a><a href="#help">Help</a></nav>
+
+    <section class="quick" id="quick">
+      <p class="kicker">Recommended presentation path · 3–5 minutes</p>
+      <h2>Run these nine checks, plus the OCR bonus</h2>
+      <p class="note">The checkboxes persist only in this guide’s Chrome storage.</p>
+      <div class="checklist">
+        <label><input type="checkbox" data-key="q1"><span>Double-click <strong>Reset Test Kit.command</strong>, approve the scoped reset, then double-click <strong>Open Verdean.command</strong>.</span></label>
+        <label><input type="checkbox" data-key="q2"><span>In Chrome, confirm the reset opened Verdean with <strong>No folder connected</strong>. No Incognito window or manual site-data clearing is needed.</span></label>
+        <label><input type="checkbox" data-key="q3"><span>Click <strong>Connect a folder</strong> and choose <strong>01 - CONNECT THIS FOLDER</strong>.</span></label>
+        <label><input type="checkbox" data-key="q4"><span>Confirm <strong>5 documents</strong>, <strong>4 evidence files</strong>, <strong>100% confidence</strong>, <strong>7 differences</strong>, and <strong>Saved and verified in D1</strong>.</span></label>
+        <label><input type="checkbox" data-key="q5"><span>Open <strong>Workflow</strong> and narrate classification, organization, matching, validation, persistence, and review.</span></label>
+        <label><input type="checkbox" data-key="q6"><span>Return to <strong>Review</strong>, expand all seven differences, and click <strong>Preview annotated sources</strong> on one finding.</span></label>
+        <label><input type="checkbox" data-key="q7"><span>Click <strong>Email reviewer</strong>, enter a test recipient, inspect the seven-finding draft, then cancel or close the mail draft without sending.</span></label>
+        <label><input type="checkbox" data-key="q8"><span>Click <strong>Request fixes for all</strong>, then <strong>Mark reviewed</strong>.</span></label>
+        <label><input type="checkbox" data-key="q9"><span>Reload. Confirm the five files, seven findings, dispositions, reviewed state, and D1 status return.</span></label>
+        <label><input type="checkbox" data-key="q10"><span><strong>Bonus — OCR:</strong> click <strong>Start over</strong>, then <strong>Choose individual files</strong> with <code>01_supplier_quote.txt</code> and <code>05_alternate_matching_contract_scan.png</code>. Confirm <strong>100% confidence</strong>, <strong>14+ fields</strong>, and <strong>0 differences</strong>. (Full steps in the <a href="#ocr">OCR scan demo</a> section.)</span></label>
+      </div>
+    </section>
+
+    <section id="start">
+      <p class="kicker">Step 1</p><h2>Start the correct project</h2>
+      <ol class="steps">
+        <li>Open <strong>Finder → Desktop → Verdean Test Kit</strong>.</li>
+        <li>Run <strong>Verify Test Kit.command</strong>. Every prepared-kit check should pass.</li>
+        <li>Double-click <strong>Open Verdean.command</strong>. The launcher reuses a verified Verdean server at port 3000 or starts the current repository in a visible Terminal window.</li>
+        <li>The launcher opens this guide, the app, and the prepared source folder.</li>
+      </ol>
+      <div class="path"><span id="projectPath">$VERDEAN_PROJECT_ROOT</span><button class="copy" data-copy="projectPath">Copy project path</button></div>
+      <div class="path"><span id="folderPath">$HOME/Desktop/Verdean Test Kit/01 - CONNECT THIS FOLDER</span><button class="copy" data-copy="folderPath">Copy folder path</button></div>
+      <details><summary>Manual startup fallback</summary><div>Open Terminal, run <code>cd "$VERDEAN_PROJECT_ROOT"</code>, then <code>npm run dev</code>. Open <code>http://localhost:3000</code>.</div></details>
+    </section>
+
+    <section id="baseline">
+      <p class="kicker">Step 2</p><h2>Connect the five-file commercial record</h2>
+      <p class="note">Use the writable folder path for the full product demonstration. Use <strong>Choose individual files</strong> only when you want a read-only fallback with no physical organization.</p>
+      <ol class="steps">
+        <li>Click <strong>Connect a folder</strong>.</li>
+        <li>Press <strong>⌘⇧G</strong> in the picker, paste the prepared folder path, press Return, and select the folder.</li>
+        <li>Approve Chrome’s folder access prompt.</li>
+        <li>Wait for <strong>Saved and verified in D1</strong>.</li>
+      </ol>
+      <div class="metrics"><div class="metric"><strong>5</strong><span>source documents</span></div><div class="metric"><strong>4</strong><span>linked evidence files</span></div><div class="metric"><strong>100%</strong><span>match confidence</span></div><div class="metric"><strong>7</strong><span>commercial differences</span></div></div>
+      <table><thead><tr><th>File</th><th>Type</th><th>Status</th></tr></thead><tbody>
+        <tr><td>01_supplier_quote.txt</td><td>Quote</td><td>Matched</td></tr>
+        <tr><td>02_buyer_email.txt</td><td>Email</td><td>Matched</td></tr>
+        <tr><td>02a_supplier_invoice.txt</td><td>Invoice</td><td>Matched</td></tr>
+        <tr><td>03_call_transcript.txt</td><td>Transcript</td><td>Matched</td></tr>
+        <tr><td>04_signed_contract.txt</td><td>Contract</td><td>Matched</td></tr>
+      </tbody></table>
+      <div class="callout"><strong>macOS metadata:</strong> `.DS_Store` may physically exist, but Verdean ignores it before counting, reading, organizing, displaying, or persisting the workspace.</div>
+    </section>
+
+    <section id="review">
+      <p class="kicker">Step 3</p><h2>Show the seven grounded differences</h2>
+      <table><thead><tr><th>Term</th><th>Evidence</th><th>Contract</th></tr></thead><tbody>
+        <tr><td>Unit price</td><td>46.80</td><td>49.20</td></tr><tr><td>Quantity</td><td>1,200</td><td>1,000</td></tr><tr><td>Delivery</td><td>October 15, 2026</td><td>November 1, 2026</td></tr><tr><td>Payment</td><td>Net 45</td><td>Net 30</td></tr><tr><td>Warranty</td><td>24 months</td><td>12 months</td></tr><tr><td>Shipping</td><td>Included</td><td>Billed separately</td></tr><tr><td>Restocking</td><td>None</td><td>15%</td></tr>
+      </tbody></table>
+      <ol class="steps"><li>Open <strong>Workflow</strong> first to show the live pipeline and persisted record counts.</li><li>Return to <strong>Review</strong> and click <strong>Show all 7 differences</strong>.</li><li>Choose one individual disposition, then use <strong>Request fixes for all</strong> for the quick completion path.</li><li>Click <strong>Mark reviewed</strong>. This records review; it does not approve or edit the contract.</li></ol>
+    </section>
+
+    <section id="handoff">
+      <p class="kicker">Step 4</p><h2>Inspect evidence and hand off to a reviewer</h2>
+      <h3>Annotated source preview</h3>
+      <ol class="steps"><li>Click <strong>Preview annotated sources</strong> on any finding.</li><li>Confirm the evidence file is on the left and governing contract on the right.</li><li>Confirm the relevant clause is highlighted in each full document.</li><li>Close with the button or Escape.</li></ol>
+      <h3>Reviewer email draft</h3>
+      <ol class="steps"><li>Click <strong>Email reviewer</strong>.</li><li>Enter an email address you control.</li><li>Confirm the draft contains the workspace, contract, seven findings, and current dispositions.</li><li>Click <strong>Open email draft</strong>. Verdean opens the default mail app; it does not send automatically.</li></ol>
+      <div class="callout gold">Source documents are not attached to the email. Nothing leaves the mail application until the user presses Send.</div>
+    </section>
+
+    <section id="persistence">
+      <p class="kicker">Step 5</p><h2>Prove the dashboard is database-backed</h2>
+      <ol class="steps"><li>Wait for <strong>Saved and verified in D1</strong>.</li><li>Record all dispositions and mark the review complete.</li><li>Reload the page.</li><li>Confirm the five-document workspace, invoice, seven findings, seven decisions, and reviewed state return.</li><li>Open an annotated preview after reload. Stored excerpts remain, but full source text asks for folder reconnection because raw files are not persisted.</li></ol>
+      <div class="callout">D1 stores bounded metadata, relationships, findings, decisions, and run state. Raw local files and page images stay outside the database.</div>
+    </section>
+
+    <section id="folder">
+      <p class="kicker">Step 6</p><h2>Inspect non-destructive organization</h2>
+      <ol class="steps"><li>Open the connected folder in Finder.</li><li>Confirm `_Verdean` exists with <strong>Quotes, Invoices, Contracts, Emails,</strong> and <strong>Transcripts</strong>.</li><li>Confirm the five originals remain unchanged at the top level.</li><li>Run the reset command before repeating the presentation.</li></ol>
+      <div class="callout warning">Connect only <strong>01 - CONNECT THIS FOLDER</strong>, never the parent Test Kit folder. The parent also contains commands, documentation, and optional fixtures.</div>
+    </section>
+
+    <section id="ocr">
+      <p class="kicker">OCR scan demo</p><h2>Read a photographed contract and reconcile it</h2>
+      <p class="note">Verdean routes scans (PNG/JPEG/WebP) to the bundled document-intelligence provider, reads the photographed contract, classifies it, matches it to the quote, and compares every commercial term.</p>
+      <ol class="steps">
+        <li>Start Verdean, then click <strong>Choose individual files</strong>.</li>
+        <li>Select <code>01_supplier_quote.txt</code> from <strong>01 - CONNECT THIS FOLDER</strong> and <code>05_alternate_matching_contract_scan.png</code> from <strong>02 - OPTIONAL DROP-INS</strong>.</li>
+        <li>Wait for <strong>Saved and verified in D1</strong>. The scan shows <strong>Optional document intelligence · 1 page extracted and included in comparison</strong>.</li>
+        <li>Confirm the scan is classified as a <strong>Contract</strong> referencing <strong>Q-2026-0842</strong> with <strong>100% confidence</strong> and 14+ extracted fields.</li>
+        <li>Confirm <strong>0 differences</strong>: this “Matched Alternate Draft” reconciles cleanly against the quote, in contrast to the executed copy’s seven differences.</li>
+      </ol>
+      <div class="metrics"><div class="metric"><strong>1</strong><span>scanned contract</span></div><div class="metric"><strong>100%</strong><span>match confidence</span></div><div class="metric"><strong>14+</strong><span>extracted fields</span></div><div class="metric"><strong>0</strong><span>differences</span></div></div>
+      <div class="callout"><strong>What is extracted:</strong> contract ID <code>C-2026-312</code>, commercial reference <code>Q-2026-0842</code>, parties, program, 1,200 units at USD 46.80 (<code>$56,160.00</code>), delivery October 15, Net 45, 24-month warranty, expedited freight included, and no restocking fee.</div>
+      <div class="callout warning"><strong>Only rendered page images are sent</strong> to the provider; the source photo stays local. Image scans are the reliable OCR path today — the PDF renderer is still being hardened, so demo with PNG/JPEG scans.</div>
+    </section>
+
+    <section id="optional">
+      <p class="kicker">Optional recovery tests</p><h2>Stage one edge case at a time</h2>
+      <h3>Manual-review queue</h3><p>Copy <code>06_manual_review_required.md</code> from <strong>02 - OPTIONAL DROP-INS</strong> into the connected folder. Keep the Verdean tab visible for 5–10 seconds, then verify the queued file and <strong>Mark manually reviewed</strong> recovery.</p>
+      <h3>Multiple contracts</h3><p>Copy <code>05_alternate_matching_contract.txt</code> into the connected folder. After the visible-tab refresh, choose the governing contract. The original contract produces seven differences; the matched alternate should produce zero. (For the scanned version, see the <a href="#ocr">OCR scan demo</a>.)</p>
+      <p class="note">The recheck is intentionally limited to direct files about every five seconds while the tab is visible.</p>
+    </section>
+
+    <section id="reset">
+      <p class="kicker">Finish</p><h2>Return to a deterministic baseline</h2>
+      <ol class="steps"><li>Double-click <strong>Reset Test Kit.command</strong> and approve the prompt.</li><li>The command removes only generated `_Verdean` output, known staged optional files, and `.DS_Store` metadata inside this kit.</li><li>It restores all five canonical files and verifies each copy byte-for-byte.</li><li>If Verdean is running, Chrome opens the reset URL, deletes the active saved demo workspace, clears the browser pointer, and returns Verdean to the disconnected landing page showing <strong>No folder connected</strong>.</li><li>Run <strong>Verify Test Kit.command</strong>, then reconnect the prepared folder and rehearse again.</li></ol>
+      <p class="note">Inside the app, <strong>Start over</strong> also clears the active saved review workspace and returns to the landing page. It intentionally leaves source files and generated `_Verdean` copies untouched; use the Test Kit reset command for a complete rehearsal reset.</p>
+      <button id="clearChecks">Clear guide checkboxes</button>
+    </section>
+
+    <section id="help">
+      <p class="kicker">Troubleshooting</p><h2>If the result does not match</h2>
+      <details open><summary>Chrome cannot reach the app</summary><div>Run <strong>Open Verdean.command</strong> again and keep its Terminal window open. The current URL is <code>http://localhost:3000</code>.</div></details>
+      <details><summary>The app restores an old workspace</summary><div>Double-click <strong>Reset Test Kit.command</strong> while Verdean is running, or click <strong>Start over</strong> inside Verdean. Both clear the active browser pointer and delete that saved demo workspace from D1.</div></details>
+      <details><summary>I see more or fewer than five documents</summary><div>Run <strong>Reset Test Kit.command</strong>, then <strong>Verify Test Kit.command</strong>. Reconnect only the prepared source folder. `.DS_Store` should never appear.</div></details>
+      <details><summary>I do not see `_Verdean`</summary><div>You used the read-only individual-file path or denied write access. Reconnect with <strong>Connect a folder</strong> and approve access.</div></details>
+      <details><summary>The annotated preview says reconnect</summary><div>The page was restored from D1. Verdean intentionally does not persist raw file text. Reconnect the prepared folder to restore the full preview.</div></details>
+      <details><summary>Email does not send</summary><div>Verdean only opens a prefilled draft in the Mac’s configured default email application. Select an account and press Send there. No automatic delivery occurs.</div></details>
+    </section>
+
+    <footer>Verdean Test Kit · Five-file scenario Q-2026-0842 · Local-first, database-backed, human-controlled.</footer>
+  </main>
+  <script>
+    const checks=[...document.querySelectorAll('input[type=checkbox][data-key]')];
+    checks.forEach(box=>{box.checked=localStorage.getItem('verdean-guide-'+box.dataset.key)==='1';box.addEventListener('change',()=>localStorage.setItem('verdean-guide-'+box.dataset.key,box.checked?'1':'0'))});
+    document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{const text=document.getElementById(button.dataset.copy).textContent;await navigator.clipboard.writeText(text);const old=button.textContent;button.textContent='Copied';setTimeout(()=>button.textContent=old,1200)}));
+    document.getElementById('clearChecks').addEventListener('click',()=>checks.forEach(box=>{box.checked=false;localStorage.removeItem('verdean-guide-'+box.dataset.key)}));
+  </script>
+</body>
+</html>

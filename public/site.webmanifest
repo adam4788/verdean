@@ -1,0 +1,24 @@
+{
+  "name": "Verdean",
+  "short_name": "Verdean",
+  "description": "A quote-to-contract validation agent with a clear evidence trail and humans in control.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7F4EE",
+  "theme_color": "#171714",
+  "icons": [
+    {
+      "src": "/icons/verdean-app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/verdean-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

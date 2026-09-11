@@ -1,0 +1,16 @@
+SUPPLIER INVOICE — PRE-PRODUCTION BILLING REFERENCE
+Invoice ID: INV-2026-418
+Quote reference: Q-2026-0842
+Supplier: Example Supplier Co.
+Buyer: Example Buyer Co.
+Program: NX-48 Charging Module Program
+
+Quantity: 1,200 units
+Unit price: USD 46.80
+Payment terms: Net 45 from invoice date
+Delivery date: October 15, 2026
+Shipping: Expedited ground freight included
+Warranty: 24 months from delivery
+Restocking fee: None before production release
+
+This invoice reflects the accepted commercial evidence and is provided for reconciliation against the executed supply order.

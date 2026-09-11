@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How Verdean ingests quotes, invoices, contracts, and supporting evidence; organizes local copies; persists bounded review state; and routes annotated exceptions to a person.">
+  <title>How Verdean works — Every promise, reconciled</title>
+  <link rel="stylesheet" href="brand/verdean-document.css">
+  <style>
+    :root {
+      --ink: #171714;
+      --muted: #696761;
+      --paper: #f7f4ee;
+      --panel: #fffdf9;
+      --line: #e6e0d6;
+      --olive: #6f7654;
+      --sage: #d8e5d2;
+      --sage-deep: #35614c;
+      --clay: #e56e45;
+      --clay-deep: #b94829;
+      --gold: #f5c765;
+      --blue: #dcecf3;
+      --blue-deep: #31576d;
+      --shadow: 0 28px 80px rgba(23, 23, 20, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--paper); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Geist, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .page {
+      width: min(1500px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 44px 0 52px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+      gap: 40px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .brand { display: inline-flex; align-items: center; margin-bottom: 24px; }
+    .brand img { display: block; width: 188px; height: auto; }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--clay-deep);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 860px;
+      margin: 0;
+      font-size: clamp(42px, 5.6vw, 78px);
+      font-weight: 640;
+      letter-spacing: -.058em;
+      line-height: .98;
+    }
+
+    h1 em {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+    }
+
+    .lede {
+      margin: 0;
+      padding: 20px 0 4px 24px;
+      border-left: 2px solid var(--olive);
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .diagram-shell {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .diagram-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fbf9f5;
+    }
+
+    .diagram-topbar strong { font-size: 14px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 15px; color: var(--muted); font-size: 11px; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 9px; height: 9px; border-radius: 50%; background: var(--clay); }
+    .legend span:nth-child(2) i { background: var(--olive); }
+    .legend span:nth-child(3) i { background: var(--gold); }
+
+    .diagram-scroll { overflow-x: auto; padding: 18px; }
+    svg { display: block; min-width: 1220px; width: 100%; height: auto; }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .story-card {
+      min-height: 210px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 253, 249, .78);
+    }
+
+    .story-number {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 50%;
+      color: var(--panel);
+      background: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .story-card:nth-child(2) .story-number { background: var(--clay-deep); }
+    .story-card:nth-child(3) .story-number { background: var(--sage-deep); }
+    .story-card h2 { margin: 0 0 9px; font-size: 19px; letter-spacing: -.03em; }
+    .story-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+    .system-design {
+      margin-top: 20px;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+    }
+
+    .system-heading {
+      display: grid;
+      grid-template-columns: .72fr 1.28fr;
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 26px;
+    }
+
+    .system-heading h2 { margin: 7px 0 0; font-size: 32px; line-height: 1.05; letter-spacing: -.045em; }
+    .system-heading > p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+    .architecture-graph {
+      overflow-x: auto;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fbf9f5;
+    }
+
+    .architecture-graph svg { min-width: 940px; }
+
+    .operating-summary {
+      margin-top: 24px;
+      border-block: 1px solid var(--line);
+    }
+
+    .operating-header {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .operating-header strong { color: var(--clay-deep); font-size: 10px; font-weight: 850; letter-spacing: .11em; text-transform: uppercase; }
+
+    .operating-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin: 0;
+    }
+
+    .operating-grid div { min-height: 150px; padding: 20px 22px 22px 0; }
+    .operating-grid div + div { padding-left: 22px; border-left: 1px solid var(--line); }
+    .operating-grid dt { margin-bottom: 13px; color: var(--sage-deep); font-size: 10px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+    .operating-grid dd { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .operating-grid dd strong { display: block; margin-bottom: 5px; color: var(--ink); font-size: 15px; line-height: 1.25; letter-spacing: -.02em; }
+
+    .stack-line {
+      display: grid;
+      grid-template-columns: 118px 1fr;
+      gap: 20px;
+      padding-top: 20px;
+    }
+
+    .stack-line strong { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+    .stack-line p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .stack-line b { color: var(--ink); font-weight: 720; }
+
+    .narrative {
+      display: grid;
+      grid-template-columns: .72fr 1.28fr;
+      gap: 28px;
+      margin-top: 20px;
+      padding: 30px;
+      border-radius: 22px;
+      color: #fffdf9;
+      background: var(--ink);
+    }
+
+    .narrative .kicker {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .narrative h2 { max-width: 430px; margin: 0; font-size: clamp(26px, 3vw, 40px); line-height: 1.08; letter-spacing: -.045em; }
+    .narrative p { margin: 0; color: #d3d0c9; font-size: 15px; line-height: 1.72; }
+    .narrative strong { color: #fff; }
+
+    .truth-note {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 18px;
+      padding: 16px 18px;
+      border: 1px solid #e8cfc2;
+      border-radius: 14px;
+      color: #73402f;
+      background: #fff6f0;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .truth-note b { flex: 0 0 auto; text-transform: uppercase; letter-spacing: .08em; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    @media (max-width: 900px) {
+      .page { width: min(100% - 24px, 1500px); padding-top: 24px; }
+      header, .narrative, .system-heading { grid-template-columns: 1fr; gap: 20px; }
+      .lede { padding-top: 2px; }
+      .story-grid { grid-template-columns: 1fr; }
+      .story-card { min-height: 0; }
+      .operating-grid { grid-template-columns: 1fr 1fr; }
+      .operating-grid div:nth-child(3) { padding-left: 0; border-top: 1px solid var(--line); border-left: 0; }
+      .operating-grid div:nth-child(4) { border-top: 1px solid var(--line); }
+      .diagram-topbar { align-items: flex-start; flex-direction: column; }
+      footer { flex-direction: column; }
+    }
+
+    @media (max-width: 560px) {
+      .system-design { padding: 24px 20px; }
+      .operating-grid { grid-template-columns: 1fr; }
+      .operating-grid div, .operating-grid div + div, .operating-grid div:nth-child(3) { min-height: 0; padding: 18px 0; border-top: 1px solid var(--line); border-left: 0; }
+      .stack-line { grid-template-columns: 1fr; gap: 8px; }
+    }
+
+    @media print {
+      @page { size: landscape; margin: .45in; }
+      body { background: #fff; }
+      .page { width: 100%; padding: 0; }
+      header { margin-bottom: 16px; }
+      h1 { font-size: 48px; }
+      .diagram-shell { box-shadow: none; break-inside: avoid; }
+      .diagram-scroll { overflow: visible; padding: 8px; }
+      svg { min-width: 0; }
+      .story-grid, .system-design, .narrative { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="brand"><img src="../public/verdean-horizontal.svg" alt="Verdean"></div>
+        <p class="eyebrow">The commercial reconciliation loop</p>
+        <h1>From scattered promises to <em>review-ready exceptions.</em></h1>
+      </div>
+      <p class="lede">Companies run on quotes, contracts, invoices, emails, and conversations. Verdean connects that evidence, compares what was promised with what will be signed, and sends only the meaningful mismatches to a person.</p>
+    </header>
+
+    <section class="diagram-shell" aria-labelledby="diagram-title">
+      <div class="diagram-topbar">
+        <strong id="diagram-title">How the work changes</strong>
+        <div class="legend" aria-label="Legend">
+          <span><i></i>Manual risk</span>
+          <span><i></i>Agentic workflow</span>
+          <span><i></i>Human decision</span>
+        </div>
+      </div>
+      <div class="diagram-scroll">
+        <svg viewBox="0 0 1420 940" role="img" aria-labelledby="svg-title svg-desc">
+          <title id="svg-title">Manual reconciliation compared with the Verdean agentic workflow</title>
+          <desc id="svg-desc">The top lane shows fragmented quotes, contracts, invoices, email, and call notes moving through a single employee named Jack, creating slow manual checking and missed mismatch risk. The bottom lane shows the same evidence entering Verdean, which catalogs, classifies, organizes, matches, validates, persists bounded review state, explains exceptions with annotated sources, and pauses for human review.</desc>
+          <defs>
+            <pattern id="paperGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#eee9df" stroke-width="1"/>
+            </pattern>
+            <marker id="arrow-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#817e76"/>
+            </marker>
+            <marker id="arrow-clay" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#b94829"/>
+            </marker>
+            <marker id="arrow-olive" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#6f7654"/>
+            </marker>
+            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#171714" flood-opacity=".08"/>
+            </filter>
+          </defs>
+
+          <rect x="0" y="0" width="1420" height="940" rx="22" fill="url(#paperGrid)"/>
+
+          <!-- Manual lane -->
+          <rect x="24" y="24" width="1372" height="352" rx="20" fill="#fffaf7" stroke="#ecd8ce" stroke-width="2"/>
+          <rect x="44" y="43" width="156" height="28" rx="14" fill="#f8dfd3"/>
+          <text x="122" y="62" text-anchor="middle" fill="#9d3c22" font-size="12" font-weight="800" letter-spacing="1.6">BEFORE · MANUAL</text>
+          <text x="44" y="103" fill="#171714" font-size="26" font-weight="750">Commercial truth lives in too many places.</text>
+          <text x="44" y="129" fill="#696761" font-size="14">A specialist has to reconstruct the deal, document by document, every time.</text>
+
+          <!-- source cards manual -->
+          <g filter="url(#softShadow)">
+            <rect x="55" y="166" width="176" height="72" rx="12" fill="#fffdf9" stroke="#c8d9e1" stroke-width="2"/>
+            <rect x="55" y="250" width="176" height="72" rx="12" fill="#fffdf9" stroke="#d4d8c3" stroke-width="2"/>
+            <rect x="247" y="166" width="176" height="72" rx="12" fill="#fffdf9" stroke="#eadbb6" stroke-width="2"/>
+            <rect x="247" y="250" width="176" height="72" rx="12" fill="#fffdf9" stroke="#e7cbc0" stroke-width="2"/>
+          </g>
+          <text x="75" y="191" fill="#31576d" font-size="11" font-weight="800" letter-spacing="1.1">QUOTE SYSTEM</text>
+          <text x="75" y="216" fill="#171714" font-size="17" font-weight="750">Salesforce</text>
+          <text x="75" y="275" fill="#56603f" font-size="11" font-weight="800" letter-spacing="1.1">CONTRACT / ERP</text>
+          <text x="75" y="300" fill="#171714" font-size="17" font-weight="750">SAP</text>
+          <text x="267" y="191" fill="#7c5c17" font-size="11" font-weight="800" letter-spacing="1.1">DOWNSTREAM</text>
+          <text x="267" y="216" fill="#171714" font-size="17" font-weight="750">Invoices + POs</text>
+          <text x="267" y="275" fill="#96482f" font-size="11" font-weight="800" letter-spacing="1.1">UNSTRUCTURED</text>
+          <text x="267" y="300" fill="#171714" font-size="15" font-weight="750">Email + phone calls</text>
+
+          <path d="M 444 205 C 505 205, 505 225, 548 225" fill="none" stroke="#817e76" stroke-width="2.5" marker-end="url(#arrow-ink)"/>
+          <path d="M 444 286 C 505 286, 505 249, 548 249" fill="none" stroke="#817e76" stroke-width="2.5" marker-end="url(#arrow-ink)"/>
+          <text x="492" y="190" text-anchor="middle" fill="#696761" font-size="11">screenshots</text>
+          <text x="495" y="310" text-anchor="middle" fill="#696761" font-size="11">exports</text>
+
+          <!-- Jack -->
+          <g filter="url(#softShadow)">
+            <rect x="560" y="158" width="230" height="174" rx="18" fill="#171714"/>
+          </g>
+          <circle cx="675" cy="202" r="23" fill="#f5c765"/>
+          <circle cx="675" cy="196" r="8" fill="#171714"/>
+          <path d="M 660 217 C 665 207, 685 207, 690 217" fill="#171714"/>
+          <text x="675" y="252" text-anchor="middle" fill="#fffdf9" font-size="22" font-weight="800">Jack</text>
+          <text x="675" y="274" text-anchor="middle" fill="#cbc8c0" font-size="12">business + systems expert</text>
+          <line x1="590" y1="292" x2="760" y2="292" stroke="#3c3b37"/>
+          <text x="675" y="313" text-anchor="middle" fill="#f0a68d" font-size="11" font-weight="700">read · interpret · compare · chase</text>
+
+          <path d="M 806 245 L 920 245" fill="none" stroke="#b94829" stroke-width="3" marker-end="url(#arrow-clay)"/>
+          <text x="862" y="229" text-anchor="middle" fill="#9d3c22" font-size="11" font-weight="700">manual handoff</text>
+
+          <!-- risk result -->
+          <g filter="url(#softShadow)">
+            <rect x="934" y="158" width="422" height="174" rx="18" fill="#fff3ed" stroke="#dc8c70" stroke-width="2"/>
+          </g>
+          <text x="960" y="190" fill="#9d3c22" font-size="11" font-weight="850" letter-spacing="1.2">BOTTLENECK + RISK</text>
+          <text x="960" y="216" fill="#171714" font-size="18" font-weight="800">
+            <tspan x="960" dy="0">The review is slow, fragile,</tspan>
+            <tspan x="960" dy="22">and hard to scale.</tspan>
+          </text>
+          <circle cx="972" cy="259" r="4" fill="#b94829"/>
+          <text x="986" y="264" fill="#696761" font-size="13">Formats and wording are inconsistent.</text>
+          <circle cx="972" cy="285" r="4" fill="#b94829"/>
+          <text x="986" y="290" fill="#696761" font-size="13">Calls and emails are easy to miss.</text>
+          <circle cx="972" cy="311" r="4" fill="#b94829"/>
+          <text x="986" y="316" fill="#696761" font-size="13">Knowledge walks out the door with Jack.</text>
+
+          <!-- Bridge label -->
+          <rect x="521" y="392" width="378" height="54" rx="27" fill="#171714"/>
+          <text x="710" y="414" text-anchor="middle" fill="#f5c765" font-size="11" font-weight="800" letter-spacing="1.3">THE SHIFT</text>
+          <text x="710" y="434" text-anchor="middle" fill="#fffdf9" font-size="14" font-weight="650">Encode the workflow. Keep the judgment human.</text>
+
+          <!-- Agentic lane -->
+          <rect x="24" y="462" width="1372" height="454" rx="20" fill="#f8fbf6" stroke="#cbd8c3" stroke-width="2"/>
+          <rect x="44" y="482" width="178" height="28" rx="14" fill="#d8e5d2"/>
+          <text x="133" y="501" text-anchor="middle" fill="#35614c" font-size="12" font-weight="800" letter-spacing="1.6">AFTER · VERDEAN</text>
+          <text x="44" y="541" fill="#171714" font-size="26" font-weight="750">A bounded agent builds the evidence trail continuously.</text>
+          <text x="44" y="567" fill="#696761" font-size="14">It organizes, reconciles, persists the review state, and hands annotated exceptions to a person.</text>
+
+          <!-- inputs bottom -->
+          <g filter="url(#softShadow)">
+            <rect x="55" y="611" width="196" height="200" rx="18" fill="#fffdf9" stroke="#d7d1c7" stroke-width="2"/>
+          </g>
+          <text x="76" y="640" fill="#31576d" font-size="11" font-weight="850" letter-spacing="1.1">COMMERCIAL EVIDENCE</text>
+          <rect x="76" y="659" width="154" height="31" rx="8" fill="#eef6f9"/>
+          <text x="89" y="680" fill="#31576d" font-size="12" font-weight="700">Quotes / pricing</text>
+          <rect x="76" y="699" width="154" height="31" rx="8" fill="#f1f5ee"/>
+          <text x="89" y="720" fill="#56603f" font-size="12" font-weight="700">Contracts / SOWs</text>
+          <rect x="76" y="739" width="154" height="31" rx="8" fill="#fff8e7"/>
+          <text x="89" y="760" fill="#745918" font-size="12" font-weight="700">Invoices / POs</text>
+          <rect x="76" y="779" width="154" height="31" rx="8" fill="#fff1eb"/>
+          <text x="89" y="800" fill="#8d3f28" font-size="12" font-weight="700">Email / call notes</text>
+
+          <path d="M 264 711 L 316 711" fill="none" stroke="#6f7654" stroke-width="3" marker-end="url(#arrow-olive)"/>
+          <text x="289" y="695" text-anchor="middle" fill="#56603f" font-size="10" font-weight="700">ingest</text>
+
+          <!-- Verdean engine -->
+          <g filter="url(#softShadow)">
+            <rect x="330" y="594" width="612" height="260" rx="22" fill="#171714"/>
+          </g>
+          <text x="360" y="628" fill="#f5c765" font-size="11" font-weight="850" letter-spacing="1.3">VERDEAN AGENT RUN</text>
+          <text x="360" y="654" fill="#fffdf9" font-size="18" font-weight="750">Transparent pipeline, grounded output</text>
+
+          <path d="M 408 718 L 500 718 M 562 718 L 654 718 M 716 718 L 808 718" stroke="#7f865f" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arrow-olive)"/>
+
+          <circle cx="386" cy="718" r="31" fill="#293025" stroke="#8e9870" stroke-width="2"/>
+          <text x="386" y="715" text-anchor="middle" fill="#fffdf9" font-size="12" font-weight="800">1</text>
+          <text x="386" y="734" text-anchor="middle" fill="#cfd7bb" font-size="9">CATALOG</text>
+
+          <circle cx="540" cy="718" r="31" fill="#293025" stroke="#8e9870" stroke-width="2"/>
+          <text x="540" y="715" text-anchor="middle" fill="#fffdf9" font-size="12" font-weight="800">2</text>
+          <text x="540" y="734" text-anchor="middle" fill="#cfd7bb" font-size="9">CLASSIFY</text>
+
+          <circle cx="694" cy="718" r="31" fill="#293025" stroke="#8e9870" stroke-width="2"/>
+          <text x="694" y="715" text-anchor="middle" fill="#fffdf9" font-size="12" font-weight="800">3</text>
+          <text x="694" y="734" text-anchor="middle" fill="#cfd7bb" font-size="9">MATCH</text>
+
+          <circle cx="848" cy="718" r="31" fill="#293025" stroke="#f5c765" stroke-width="2"/>
+          <text x="848" y="715" text-anchor="middle" fill="#fffdf9" font-size="12" font-weight="800">4</text>
+          <text x="848" y="734" text-anchor="middle" fill="#f5d988" font-size="9">VALIDATE</text>
+
+          <rect x="360" y="783" width="552" height="43" rx="10" fill="#23231f" stroke="#3b3b34"/>
+          <text x="380" y="801" fill="#aaa79e" font-size="10" font-weight="700">COMPARES NORMALIZED TERMS</text>
+          <text x="380" y="818" fill="#fffdf9" font-size="11">price · quantity · dates · payment · warranty · shipping · restocking</text>
+
+          <path d="M 956 711 L 1008 711" fill="none" stroke="#6f7654" stroke-width="3" marker-end="url(#arrow-olive)"/>
+          <text x="982" y="695" text-anchor="middle" fill="#56603f" font-size="10" font-weight="700">escalate</text>
+
+          <!-- output -->
+          <g filter="url(#softShadow)">
+            <rect x="1022" y="594" width="334" height="260" rx="22" fill="#fffdf9" stroke="#b9cba9" stroke-width="2"/>
+          </g>
+          <rect x="1044" y="616" width="132" height="25" rx="12.5" fill="#fff0e9"/>
+          <text x="1110" y="633" text-anchor="middle" fill="#a13f24" font-size="10" font-weight="850" letter-spacing="1">EXCEPTION QUEUE</text>
+          <text x="1044" y="670" fill="#171714" font-size="19" font-weight="800">Show what changed.</text>
+          <text x="1044" y="693" fill="#696761" font-size="12">Evidence value ↔ contract value</text>
+          <rect x="1044" y="712" width="290" height="58" rx="10" fill="#fff5ef" stroke="#efc6b7"/>
+          <text x="1058" y="735" fill="#9d3c22" font-size="10" font-weight="800">UNIT PRICE MISMATCH</text>
+          <text x="1058" y="756" fill="#171714" font-size="13" font-weight="750">$46.80 quoted → $49.20 contract</text>
+          <rect x="1044" y="784" width="138" height="43" rx="10" fill="#f5c765"/>
+          <text x="1113" y="810" text-anchor="middle" fill="#171714" font-size="12" font-weight="850">HUMAN REVIEW</text>
+          <text x="1195" y="801" fill="#35614c" font-size="10" font-weight="800">WITH PROVENANCE</text>
+          <text x="1195" y="818" fill="#696761" font-size="10">annotated source + confidence</text>
+
+          <!-- scope labels -->
+          <rect x="55" y="836" width="474" height="50" rx="12" fill="#eef3e9"/>
+          <text x="73" y="856" fill="#35614c" font-size="10" font-weight="850" letter-spacing="1">MVP TODAY</text>
+          <text x="73" y="875" fill="#55584b" font-size="11">Quote + invoice + contract · organized copies · D1 review state</text>
+          <rect x="543" y="836" width="399" height="50" rx="12" fill="#fff8e7"/>
+          <text x="561" y="856" fill="#765b18" font-size="10" font-weight="850" letter-spacing="1">CONNECTOR VISION</text>
+          <text x="561" y="875" fill="#6c6249" font-size="11">Salesforce · SAP · Drive · Gmail / Outlook · event-driven</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="story-grid" aria-label="The story in three acts">
+      <article class="story-card">
+        <span class="story-number">1</span>
+        <h2>The company has a “Jack problem.”</h2>
+        <p>Jack understands both the business and the systems. He knows where the Salesforce quote lives, which SAP document governs, and which email or call changed the deal. That expertise is valuable—but the entire reconciliation process depends on his time and memory.</p>
+      </article>
+      <article class="story-card">
+        <span class="story-number">2</span>
+        <h2>The evidence refuses to stay structured.</h2>
+        <p>A quote may be a clean record, a spreadsheet, a PDF, or words spoken on a call. A contract may use different labels, units, dates, or formatting. Manual reviewers must normalize all of it before they can even ask whether the records agree.</p>
+      </article>
+      <article class="story-card">
+        <span class="story-number">3</span>
+        <h2>Verdean makes the loop agentic.</h2>
+        <p>Verdean gathers the evidence, classifies and safely organizes it, links the likely governing contract, compares normalized values, persists the bounded review trail, and explains only the exceptions. The person no longer hunts for mismatches; they inspect annotated source clauses and review a grounded decision packet.</p>
+      </article>
+    </section>
+
+    <section class="system-design" aria-labelledby="system-title">
+      <div class="system-heading">
+        <div>
+          <p class="eyebrow">System design</p>
+          <h2 id="system-title">A bounded agentic workflow.</h2>
+        </div>
+        <p>Verdean watches approved files, extracts evidence, checks commercial terms, and sends grounded mismatches to a person.</p>
+      </div>
+
+      <div class="architecture-graph">
+        <svg viewBox="0 0 1180 340" role="img" aria-labelledby="architecture-title architecture-desc">
+          <title id="architecture-title">Verdean workflow architecture</title>
+          <desc id="architecture-desc">Approved evidence enters Verdean. The workflow detects changes, extracts fields, matches records, compares terms, and sends grounded findings to a human reviewer. Gemini handles PDF and scan extraction, TypeScript performs deterministic checks, and Cloudflare D1 stores review state.</desc>
+          <defs>
+            <marker id="architecture-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#6f7654"/>
+            </marker>
+          </defs>
+
+          <rect x="18" y="34" width="190" height="102" rx="15" fill="#fffdf9" stroke="#c8d9e1" stroke-width="2"/>
+          <text x="38" y="63" fill="#31576d" font-size="10" font-weight="800" letter-spacing="1.2">APPROVED EVIDENCE</text>
+          <text x="38" y="91" fill="#171714" font-size="16" font-weight="750">Quotes · contracts</text>
+          <text x="38" y="115" fill="#696761" font-size="11">Invoices · emails · scans</text>
+
+          <path d="M 208 85 L 268 85" fill="none" stroke="#6f7654" stroke-width="2.5" marker-end="url(#architecture-arrow)"/>
+
+          <rect x="282" y="20" width="316" height="130" rx="20" fill="#171714"/>
+          <text x="308" y="51" fill="#f5c765" font-size="10" font-weight="800" letter-spacing="1.3">VERDEAN WORKFLOW</text>
+          <text x="308" y="78" fill="#fffdf9" font-size="18" font-weight="750">Detect · extract</text>
+          <text x="308" y="101" fill="#fffdf9" font-size="18" font-weight="750">Match · compare</text>
+          <text x="308" y="126" fill="#cbc8c0" font-size="11">Rechecks files and records findings</text>
+
+          <path d="M 598 85 L 658 85" fill="none" stroke="#6f7654" stroke-width="2.5" marker-end="url(#architecture-arrow)"/>
+
+          <rect x="672" y="34" width="210" height="102" rx="15" fill="#fff5ef" stroke="#efc6b7" stroke-width="2"/>
+          <text x="692" y="63" fill="#9d3c22" font-size="10" font-weight="800" letter-spacing="1.2">GROUNDED FINDINGS</text>
+          <text x="692" y="91" fill="#171714" font-size="16" font-weight="750">What changed?</text>
+          <text x="692" y="115" fill="#696761" font-size="11">Value · source · confidence</text>
+
+          <path d="M 882 85 L 942 85" fill="none" stroke="#6f7654" stroke-width="2.5" marker-end="url(#architecture-arrow)"/>
+
+          <rect x="956" y="34" width="206" height="102" rx="15" fill="#f5c765"/>
+          <text x="976" y="63" fill="#654a0d" font-size="10" font-weight="800" letter-spacing="1.2">HUMAN REVIEW</text>
+          <text x="976" y="91" fill="#171714" font-size="16" font-weight="750">Accept · fix · escalate</text>
+          <text x="976" y="115" fill="#55461f" font-size="11">The reviewer decides</text>
+
+          <path d="M 440 150 L 440 190" fill="none" stroke="#a3a091" stroke-width="2"/>
+          <path d="M 158 190 L 1020 190" fill="none" stroke="#d3cdc2" stroke-width="1.5"/>
+
+          <rect x="92" y="218" width="280" height="92" rx="15" fill="#fff8e7" stroke="#e5c66f" stroke-width="2"/>
+          <text x="112" y="247" fill="#765b18" font-size="10" font-weight="800" letter-spacing="1.2">AI EXTRACTION</text>
+          <text x="112" y="275" fill="#171714" font-size="16" font-weight="750">Gemini vision</text>
+          <text x="112" y="296" fill="#696761" font-size="11">PDFs and scans only</text>
+
+          <rect x="450" y="218" width="280" height="92" rx="15" fill="#f1f5ee" stroke="#b9cba9" stroke-width="2"/>
+          <text x="470" y="247" fill="#35614c" font-size="10" font-weight="800" letter-spacing="1.2">VERIFICATION</text>
+          <text x="470" y="275" fill="#171714" font-size="16" font-weight="750">TypeScript rules</text>
+          <text x="470" y="296" fill="#696761" font-size="11">Deterministic matching and comparison</text>
+
+          <rect x="808" y="218" width="280" height="92" rx="15" fill="#eef3e9" stroke="#b9cba9" stroke-width="2"/>
+          <text x="828" y="247" fill="#35614c" font-size="10" font-weight="800" letter-spacing="1.2">STATE</text>
+          <text x="828" y="275" fill="#171714" font-size="16" font-weight="750">Cloudflare D1</text>
+          <text x="828" y="296" fill="#696761" font-size="11">Metadata and review decisions</text>
+
+          <path d="M 232 190 L 232 218" fill="none" stroke="#a3a091" stroke-width="2" marker-end="url(#architecture-arrow)"/>
+          <path d="M 590 190 L 590 218" fill="none" stroke="#a3a091" stroke-width="2" marker-end="url(#architecture-arrow)"/>
+          <path d="M 948 190 L 948 218" fill="none" stroke="#a3a091" stroke-width="2" marker-end="url(#architecture-arrow)"/>
+        </svg>
+      </div>
+
+      <div class="operating-summary">
+        <div class="operating-header">
+          <strong>Current operating model</strong>
+        </div>
+        <dl class="operating-grid">
+          <div>
+            <dt>01 · Source</dt>
+            <dd><strong>Local files</strong>User-approved files stay local. Originals are never moved or deleted.</dd>
+          </div>
+          <div>
+            <dt>02 · Intelligence</dt>
+            <dd><strong>Visual extraction</strong>Gemini reads PDFs and scans. Text formats stay in the browser.</dd>
+          </div>
+          <div>
+            <dt>03 · State</dt>
+            <dd><strong>Review state</strong>D1 stores metadata and decisions—not raw files or page images.</dd>
+          </div>
+          <div>
+            <dt>04 · Action</dt>
+            <dd><strong>Human decision</strong>Verdean surfaces exceptions. A person accepts, fixes, or escalates.</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="stack-line">
+        <strong>Tech stack</strong>
+        <p><b>Gemini vision</b> · <b>TypeScript</b> · <b>React 19</b> · <b>PDF.js</b> · <b>Cloudflare Workers</b> · <b>D1</b></p>
+      </div>
+    </section>
+
+    <section class="narrative" aria-labelledby="narrative-title">
+      <div>
+        <p class="kicker">Narrative</p>
+        <h2 id="narrative-title">Verdean does not replace Jack’s judgment. It removes Jack’s scavenger hunt.</h2>
+      </div>
+      <p>Every company makes commercial promises across quotes, contracts, invoices, purchase orders, emails, and calls. Today, someone like Jack has to follow those promises across systems, translate inconsistent formats, and manually verify that the final contract reflects what everyone agreed. <strong>Verdean turns that expertise into a visible, bounded workflow:</strong> it builds the evidence set, organizes safe copies, matches the governing contract, detects term-level mismatches, persists review state, and presents annotated source clauses behind each exception. The agent does the repetitive reconciliation; the reviewer keeps control of the consequential decision and any email handoff.</p>
+    </section>
+
+    <aside class="truth-note">
+      <b>Product truth</b>
+      <span>The current MVP watches a user-approved local folder while the tab is open; it does not yet connect directly to Salesforce or SAP. Those systems appear above as the intended connector model. Verdean surfaces commercial exceptions for human review, stores bounded state in local D1 development, and can open a prefilled reviewer email draft. It does not provide legal advice, edit contracts, attach source files, send email automatically, or change ERP records.</span>
+    </aside>
+
+    <footer>
+      <span>Verdean · Every promise, reconciled.</span>
+      <span>Problem → agentic workflow → human-controlled exception</span>
+    </footer>
+  </main>
+</body>
+</html>

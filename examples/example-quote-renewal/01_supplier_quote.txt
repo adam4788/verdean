@@ -1,0 +1,19 @@
+SUPPLIER QUOTATION
+Quote ID: Q-2026-0842
+Supplier: Example Supplier Co.
+Buyer: Example Buyer Co.
+Opportunity: NX-48 Charging Module Program
+Date: August 18, 2026
+Valid through: September 15, 2026
+
+Line item: NX-48 charging control module
+Quantity: 1,200 units
+Unit price: USD 46.80
+Total quoted value: USD 56,160.00
+Delivery date: October 15, 2026
+Payment terms: Net 45 from invoice date
+Freight: Expedited ground freight included
+Warranty: 24 months from delivery
+Cancellation/restocking fee: None before production release
+
+Prepared by: Supplier Reviewer, Account Executive
